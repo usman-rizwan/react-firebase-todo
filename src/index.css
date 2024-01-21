@@ -1,0 +1,8 @@
+.input-text:focus{
+ border: 0px solid ;
+ outline: none;
+ border-bottom: 2px solid black;
+}
+.input-text{
+    margin-right: 6px !important;
+}
