@@ -4,10 +4,19 @@ import "./App.css";
 import { MDBInput } from "mdb-react-ui-kit";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "./index.css";
-import { app, db, collection, addDoc ,serverTimestamp , getDocs,
+import {
+  app,
+  db,
+  collection,
+  addDoc,
+  serverTimestamp,
+  getDocs,
   onSnapshot,
   orderBy,
-  query, } from "./config/firebase";
+  query,
+  deleteDoc,
+  doc
+} from "./config/firebase";
 function App() {
   const [todos, setTodo] = useState([]);
   const [value, setValue] = useState("");
@@ -23,52 +32,62 @@ function App() {
         timestamp: serverTimestamp(),
       });
       console.log("Document written with ID: ", docRef.id);
-      setTodo([...todos, { value, disabled: true }]);
-      setValue("");
+      setTodo([...todos, { data: { todos: value }, id: docRef.id }]);
+      
+      // setTodo([...todos, { value, disabled: true }]);
+      // setValue("");
     } else {
       alert("Add valid input");
     }
   };
-  const delTodo = (i) => {
-    const allTodos = [...todos];
-    console.log(i);
-    allTodos.splice(i, 1);
-    setTodo(allTodos);
-  };
-  const editTodos = (i, v) => {
-    if (v.value.trim() !== "") {
-      todos.splice(i, 1, { ...v, value: v.value, disabled: false });
-      setTodo([...todos]);
-    } else {
-      todos.splice(i, 1);
-      setTodo([...todos]);
-    }
-  };
+  const delTodo = async(id) => {
+    let deleted = await deleteDoc(doc(db, "todos", id));
+    console.log(deleted);
 
-const getTodos = () => {
-  const q = query(collection(db, "todos"), orderBy("timestamp", "desc"));
-  const unsubscribe = onSnapshot(q, (snapshot) => {
-    const updatedTodos = snapshot.docs.map((doc) => doc.data());
-    setTodo(updatedTodos);
-    console.log("Realtime todos -->", updatedTodos);
-  });
-};
+    // const allTodos = [...todos];
+    // console.log(i);
+    // allTodos.splice(i, 1);
+    // setTodo(allTodos);
+
+  };
+  // const editTodos = (i, v) => {
+  //   if (v.value.trim() !== "") {
+  //     todos.splice(i, 1, { ...v, value: v.value, disabled: false });
+  //     setTodo([...todos]);
+  //   } else {
+  //     todos.splice(i, 1);
+  //     setTodo([...todos]);
+  //   }
+  // };
+
+  const getTodos = () => {
+    const q = query(collection(db, "todos"), orderBy("timestamp", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      // for (let index = 0; index < snapshot.docs.length; index++) {
+      //   console.log(snapshot.docs[index].id );
+      // }
+      // console.log("snapshot" , snapshot.docs[1].id);
+      const updatedTodos = snapshot.docs.map(
+        (doc) => (console.log(doc.id), { data: doc.data(), id: doc.id })
+      );
+      setTodo(updatedTodos);
+      console.log("Realtime todos -->", updatedTodos);
+    });
+  };
 
   const delAll = () => {
     setTodo([]);
   };
   useEffect(() => {
-   getTodos()
+    getTodos();
 
-  
-  //  setTodo()
-  },[]);
+    //  setTodo()
+  }, []);
 
   return (
     <>
       <div className="container  p-5">
         <div className="d-flex justify-content-center items-center">
-
           <h1>Enter Your Todo</h1>
         </div>
 
@@ -97,19 +116,10 @@ const getTodos = () => {
         </div>
         <div className="d-flex justify-content-center items-center">
           <ol className="list-group list-group-light">
-            {todos.map((v, i) => (
-              <li className="mt-3" style={{ marginLeft: "20px" }} key={i}>
-                <input
-                  type="text"
-                  className="input-text"
-                  style={{
-                    border: "0px",
-                    borderBottom: "2px solid black",
-                    backgroundColor: "transparent",
-                  }}
-                  defaultValue={v.todos}
-                  disabled={v.disabled}
-                />
+            {/* {console.log("map wala<<<",todos.map((v,i)=>console.log(v)))} */}
+            { todos.map((v, i) => (
+              <li className="mt-3" style={{ marginLeft: "20px" }} key={v.id}>
+              {v.data.todos}
                 {/* {v.disabled ? (
                   <button
                     className="btn btn-outline-success me-2"
@@ -130,7 +140,7 @@ const getTodos = () => {
                 )} */}
                 <button
                   className="btn btn-outline-danger "
-                  onClick={() => delTodo(i)}
+                  onClick={() => delTodo(v.id)}
                 >
                   Delete
                 </button>
