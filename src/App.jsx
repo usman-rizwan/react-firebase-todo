@@ -33,7 +33,7 @@ function App() {
       });
       console.log("Document written with ID: ", docRef.id);
       setTodo([...todos, { data: { todos: value }, id: docRef.id }]);
-      
+      setValue("")
       // setTodo([...todos, { value, disabled: true }]);
       // setValue("");
     } else {
@@ -140,7 +140,7 @@ function App() {
                 )} */}
                 <button
                   className="btn btn-outline-danger "
-                  onClick={() => delTodo(v.id)}
+                  onClick={() => delTodo(v.id)} style={{marginLeft:"10px"}}
                 >
                   Delete
                 </button>
