@@ -17,6 +17,7 @@ import {
   deleteDoc,
   doc
 } from "./config/firebase";
+import Message from "./components/Notification";
 function App() {
   const [todos, setTodo] = useState([]);
   const [value, setValue] = useState("");
@@ -105,6 +106,7 @@ function App() {
           <button className="btn btn-primary mb-2 mx-2" onClick={addTodo}>
             Add Todo
           </button>
+          <Message />
 
           <button
             className="btn btn-danger mb-2 "
