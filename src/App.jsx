@@ -106,15 +106,8 @@ function App() {
           <button className="btn btn-primary mb-2 mx-2" onClick={addTodo}>
             Add Todo
           </button>
-          <Message />
 
-          <button
-            className="btn btn-danger mb-2 "
-            disabled={todos.length < 1 && todos.length == 0 ? true : false}
-            onClick={delAll}
-          >
-            Delete All
-          </button>
+         
         </div>
         <div className="d-flex justify-content-center items-center">
           <ol className="list-group list-group-light">
